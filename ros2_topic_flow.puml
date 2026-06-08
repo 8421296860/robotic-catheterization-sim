@@ -1,0 +1,27 @@
+@startuml
+skinparam componentStyle uml2
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+
+title ROS 2 Publisher/Subscriber Node Graph
+
+node "Gazebo Simulation" as Gazebo {
+  [Ultrasound Probe Camera] as US_Cam
+  [ros2_control Joint Interface] as JointCtrl
+}
+
+node "carotid_perception" as PerceptionNode {
+  [Inference Engine]
+}
+
+node "carotid_motion_planner" as PlannerNode {
+  [Target Pose Generator]
+  [Inverse Kinematics Solver]
+}
+
+' Data flow / Topics
+US_Cam --> PerceptionNode : **Topic:** /ultrasound/image_raw\n**Type:** sensor_msgs/Image
+PerceptionNode --> PlannerNode : **Topic:** /carotid/target_point\n**Type:** geometry_msgs/PointStamped
+PlannerNode --> JointCtrl : **Topic:** /joint_trajectory_controller/joint_trajectory\n**Type:** trajectory_msgs/JointTrajectory
+
+@enduml

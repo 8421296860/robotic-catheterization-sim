@@ -2,6 +2,11 @@
 
 This project is a **minimal working prototype** of a **ROS2/Gazebo-based simulation** of a robotic arm assisting in vessel catheterization. It fulfills **Option 1** of the Healthcare/MedTech Robotics technical assignment by implementing an end-to-end pipeline to **detect or localize a target vessel region** and **use that output to guide a robotic arm toward a planned access point**.
 
+## 📡 ROS 2 Publisher/Subscriber Node Map
+The following diagram illustrates the active ROS 2 node architecture and the explicit topics connecting the image perception node to the robotic motion planner:
+
+![ROS 2 Topic Flow](ros2_topic_flow.png)
+
 ---
 
 ## 📸 Pipeline Explanation & Visualizations
