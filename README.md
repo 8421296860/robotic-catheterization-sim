@@ -23,7 +23,12 @@ The **center point** is continuously mapped to a 3D spatial target within the ro
 
 ### 3. ROS2 Robotic Simulation
 A **simplified ROS2 robotic simulation** of a custom 5-DOF robotic arm, where the **end-effector represents an ultrasound probe**, runs in Gazebo Harmonic. The robot's movement is directed by a `joint_trajectory_controller`, which continuously acts to **move the robotic arm/end-effector toward this target in simulation**.
-![Robot Simulation Demo](demo_robot.png)
+
+**Gazebo Harmonic Physics Engine:**
+![Gazebo Environment](GAZEBO.png)
+
+**RViz2 Motion Planning Visualization:**
+![RViz2 Visualization](RVIZ2.png)
 
 ---
 
