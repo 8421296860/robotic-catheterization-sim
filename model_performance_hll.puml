@@ -1,0 +1,36 @@
+@startuml
+skinparam componentStyle uml2
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+
+title Medical Image Perception Pipeline (HLL)
+
+package "Ultrasound Data Input" {
+  [Publicly Available Ultrasound Image Data] as Dataset
+  [Image Preprocessing Node] as Preprocessing
+}
+
+package "Medical Image Perception" {
+  [Segmentation-Based Artery Detection\n(nnU-Net Inference)] as ONNX
+  [Post-processing / Noise Filtering] as PostProc
+}
+
+package "ROS2 Perception Node Outputs" {
+  [Segmentation Mask] as SegMask
+  [Center Point Calculation] as CenterPoint
+}
+
+Dataset --> Preprocessing : "takes an image input"
+Preprocessing --> ONNX : Processed Tensor
+ONNX --> PostProc : Raw vessel detection
+PostProc --> SegMask : "Outputs the detected vessel"
+SegMask --> CenterPoint : Extracts coordinates
+CenterPoint --> [Robot Target Planning] : "center point (target location)"
+
+note right of ONNX
+  Model: nnU-Net v2 (ONNX)
+  Task: Segmentation-based 
+  artery detection
+end note
+
+@enduml

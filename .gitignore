@@ -1,0 +1,13 @@
+# .gitignore
+ros2_ws/build/
+ros2_ws/install/
+ros2_ws/log/
+__pycache__/
+*.pyc
+.DS_Store
+*.zip
+*.pdf
+
+# Datasets and Large Model Checkpoints
+carotid-segmentation-main/src/data/
+carotid-segmentation-main/nnunet_data/

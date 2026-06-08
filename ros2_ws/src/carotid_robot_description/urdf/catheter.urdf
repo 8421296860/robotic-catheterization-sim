@@ -1,0 +1,89 @@
+<?xml version="1.0"?>
+<robot name="catheter">
+
+  <link name="world"/>
+
+  <!-- X axis slider -->
+  <joint name="catheter_x_joint" type="prismatic">
+    <parent link="world"/>
+    <child link="catheter_x_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0"/>
+    <limit lower="-2.0" upper="2.0" effort="100" velocity="1.0"/>
+  </joint>
+  <link name="catheter_x_link">
+    <inertial>
+      <mass value="0.01"/>
+      <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/>
+    </inertial>
+  </link>
+
+  <!-- Y axis slider -->
+  <joint name="catheter_y_joint" type="prismatic">
+    <parent link="catheter_x_link"/>
+    <child link="catheter_y_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-2.0" upper="2.0" effort="100" velocity="1.0"/>
+  </joint>
+  <link name="catheter_y_link">
+    <inertial>
+      <mass value="0.01"/>
+      <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/>
+    </inertial>
+  </link>
+
+  <!-- Z axis slider -->
+  <joint name="catheter_z_joint" type="prismatic">
+    <parent link="catheter_y_link"/>
+    <child link="catheter_tip"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-2.0" upper="2.0" effort="100" velocity="1.0"/>
+  </joint>
+  
+  <link name="catheter_tip">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><sphere radius="0.005"/></geometry>
+      <material name="tip_color"><color rgba="0 1 1 1"/></material>
+    </visual>
+    <!-- Removed collision to avoid Gazebo physics explosions inside narrow arteries -->
+    <inertial>
+      <mass value="0.01"/>
+      <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/>
+    </inertial>
+  </link>
+  <gazebo reference="catheter_tip">
+    <material>Gazebo/Cyan</material>
+  </gazebo>
+
+  <!-- ros2_control configuration -->
+  <ros2_control name="CatheterSystem" type="system">
+    <hardware>
+      <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+    </hardware>
+    <joint name="catheter_x_joint">
+      <command_interface name="position"/>
+      <state_interface name="position"><param name="initial_value">0.0</param></state_interface>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="catheter_y_joint">
+      <command_interface name="position"/>
+      <state_interface name="position"><param name="initial_value">0.0</param></state_interface>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="catheter_z_joint">
+      <command_interface name="position"/>
+      <state_interface name="position"><param name="initial_value">0.0</param></state_interface>
+      <state_interface name="velocity"/>
+    </joint>
+  </ros2_control>
+
+  <gazebo>
+    <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <parameters>$(find carotid_bringup)/config/controllers.yaml</parameters>
+    </plugin>
+  </gazebo>
+
+</robot>

@@ -1,0 +1,4 @@
+#!/usr/bin/env python3
+import sys
+from carotid_motion_planner.joint_state_sim import main
+sys.exit(main())

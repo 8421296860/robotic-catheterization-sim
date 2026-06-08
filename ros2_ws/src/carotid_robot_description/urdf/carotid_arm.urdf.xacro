@@ -1,0 +1,243 @@
+<?xml version="1.0"?>
+<!--
+  carotid_arm.urdf.xacro
+  ========================
+  Simplified 5-DOF robotic arm for carotid catheterization simulation.
+
+  Kinematic chain:
+    base_link
+      → joint_base_rot  (Z – yaw, ±180°)
+    link_shoulder
+      → joint_shoulder   (Y – shoulder pitch, −90°..+90°)
+    link_upper_arm
+      → joint_elbow      (Y – elbow pitch, −135°..+135°)
+    link_forearm
+      → joint_wrist_pitch (Y – wrist pitch, −90°..+90°)
+    link_wrist
+      → joint_wrist_roll  (X – wrist roll, ±180°)
+    link_end_effector
+      → probe tip (fixed – represents ultrasound probe / needle guide)
+
+  All units: metres, radians.
+  This is intentionally simple for simulation purposes.
+-->
+<robot name="carotid_arm" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- ═══════════════════════════════════════════════
+       Properties
+  ═══════════════════════════════════════════════ -->
+  <xacro:property name="link_radius"  value="0.025"/>
+  <xacro:property name="gray"   value="0.6 0.6 0.6 1"/>
+  <xacro:property name="blue"   value="0.2 0.4 0.9 1"/>
+  <xacro:property name="red"    value="0.9 0.2 0.2 1"/>
+  <xacro:property name="green"  value="0.2 0.8 0.3 1"/>
+  <xacro:property name="white"  value="0.95 0.95 0.95 1"/>
+
+  <!-- ═══════════════════════════════════════════════
+       Materials
+  ═══════════════════════════════════════════════ -->
+  <material name="gray">  <color rgba="${gray}"/>  </material>
+  <material name="blue">  <color rgba="${blue}"/>  </material>
+  <material name="red">   <color rgba="${red}"/>   </material>
+  <material name="green"> <color rgba="${green}"/> </material>
+  <material name="white"> <color rgba="${white}"/> </material>
+
+  <!-- ═══════════════════════════════════════════════
+       Macro: cylindrical link
+       params: name, length, radius, color
+  ═══════════════════════════════════════════════ -->
+  <xacro:macro name="cylinder_link" params="name length radius color">
+    <link name="${name}">
+      <visual>
+        <origin xyz="0 0 ${length/2}" rpy="0 0 0"/>
+        <geometry><cylinder length="${length}" radius="${radius}"/></geometry>
+        <material name="${color}"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 ${length/2}" rpy="0 0 0"/>
+        <geometry><cylinder length="${length}" radius="${radius}"/></geometry>
+      </collision>
+      <inertial>
+        <mass value="0.5"/>
+        <origin xyz="0 0 ${length/2}"/>
+        <inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.0005"/>
+      </inertial>
+    </link>
+  </xacro:macro>
+
+  <!-- ═══════════════════════════════════════════════
+       Macro: revolute joint
+  ═══════════════════════════════════════════════ -->
+  <xacro:macro name="rev_joint" params="name parent child axis_xyz
+                                         origin_xyz origin_rpy
+                                         lower upper">
+    <joint name="${name}" type="revolute">
+      <parent link="${parent}"/>
+      <child link="${child}"/>
+      <origin xyz="${origin_xyz}" rpy="${origin_rpy}"/>
+      <axis xyz="${axis_xyz}"/>
+      <limit lower="${lower}" upper="${upper}" effort="80" velocity="1.0"/>
+      <dynamics damping="0.5" friction="0.1"/>
+    </joint>
+  </xacro:macro>
+
+  <!-- ═══════════════════════════════════════════════
+       World / base
+  ═══════════════════════════════════════════════ -->
+  <link name="world"/>
+
+  <joint name="world_to_base" type="fixed">
+    <parent link="world"/>
+    <child link="base_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Base -->
+  <link name="base_link">
+    <visual>
+      <geometry><box size="0.15 0.15 0.05"/></geometry>
+      <origin xyz="0 0 0.025"/>
+      <material name="gray"/>
+    </visual>
+    <collision>
+      <geometry><box size="0.15 0.15 0.05"/></geometry>
+      <origin xyz="0 0 0.025"/>
+    </collision>
+    <inertial>
+      <mass value="2.0"/>
+      <inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01"/>
+    </inertial>
+  </link>
+
+  <!-- ═══════════════════════════════════════════════
+       Shoulder yaw
+  ═══════════════════════════════════════════════ -->
+  <xacro:rev_joint name="joint_base_rot"
+    parent="base_link" child="link_shoulder"
+    axis_xyz="0 0 1"
+    origin_xyz="0 0 0.05" origin_rpy="0 0 0"
+    lower="-3.1416" upper="3.1416"/>
+
+  <xacro:cylinder_link name="link_shoulder" length="0.08" radius="0.03" color="blue"/>
+
+  <!-- ═══════════════════════════════════════════════
+       Shoulder pitch
+  ═══════════════════════════════════════════════ -->
+  <xacro:rev_joint name="joint_shoulder"
+    parent="link_shoulder" child="link_upper_arm"
+    axis_xyz="0 1 0"
+    origin_xyz="0 0 0.08" origin_rpy="0 0 0"
+    lower="-1.5708" upper="1.5708"/>
+
+  <xacro:cylinder_link name="link_upper_arm" length="0.30" radius="0.022" color="gray"/>
+
+  <!-- ═══════════════════════════════════════════════
+       Elbow
+  ═══════════════════════════════════════════════ -->
+  <xacro:rev_joint name="joint_elbow"
+    parent="link_upper_arm" child="link_forearm"
+    axis_xyz="0 1 0"
+    origin_xyz="0 0 0.30" origin_rpy="0 0 0"
+    lower="-2.3562" upper="2.3562"/>
+
+  <xacro:cylinder_link name="link_forearm" length="0.25" radius="0.018" color="gray"/>
+
+  <!-- ═══════════════════════════════════════════════
+       Wrist pitch
+  ═══════════════════════════════════════════════ -->
+  <xacro:rev_joint name="joint_wrist_pitch"
+    parent="link_forearm" child="link_wrist"
+    axis_xyz="0 1 0"
+    origin_xyz="0 0 0.25" origin_rpy="0 0 0"
+    lower="-1.5708" upper="1.5708"/>
+
+  <xacro:cylinder_link name="link_wrist" length="0.06" radius="0.015" color="blue"/>
+
+  <!-- ═══════════════════════════════════════════════
+       Wrist roll
+  ═══════════════════════════════════════════════ -->
+  <xacro:rev_joint name="joint_wrist_roll"
+    parent="link_wrist" child="link_end_effector"
+    axis_xyz="0 0 1"
+    origin_xyz="0 0 0.06" origin_rpy="0 0 0"
+    lower="-3.1416" upper="3.1416"/>
+
+  <!-- End-effector body (represents probe holder) -->
+  <link name="link_end_effector">
+    <visual>
+      <geometry><cylinder length="0.06" radius="0.012"/></geometry>
+      <origin xyz="0 0 0.03"/>
+      <material name="white"/>
+    </visual>
+    <collision>
+      <geometry><cylinder length="0.06" radius="0.012"/></geometry>
+      <origin xyz="0 0 0.03"/>
+    </collision>
+    <inertial>
+      <mass value="0.1"/>
+      <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.00005"/>
+    </inertial>
+  </link>
+
+  <!-- Probe tip (fixed frame, used for target tracking) -->
+  <joint name="joint_probe_tip" type="fixed">
+    <parent link="link_end_effector"/>
+    <child link="probe_tip"/>
+    <origin xyz="0 0 0.07" rpy="0 0 0"/>
+  </joint>
+
+  <link name="probe_tip">
+    <visual>
+      <geometry><sphere radius="0.006"/></geometry>
+      <material name="red"/>
+    </visual>
+    <inertial>
+      <mass value="0.01"/>
+      <inertia ixx="0.00001" ixy="0" ixz="0" iyy="0.00001" iyz="0" izz="0.00001"/>
+    </inertial>
+  </link>
+
+  <!-- ═══════════════════════════════════════════════
+       Patient table (static environment)
+  ═══════════════════════════════════════════════ -->
+  <joint name="joint_table" type="fixed">
+    <parent link="world"/>
+    <child link="patient_table"/>
+    <origin xyz="0.4 0 -0.01" rpy="0 0 0"/>
+  </joint>
+
+  <link name="patient_table">
+    <visual>
+      <geometry><box size="0.8 0.4 0.02"/></geometry>
+      <origin xyz="0 0 0.01"/>
+      <material name="gray"/>
+    </visual>
+    <collision>
+      <geometry><box size="0.8 0.4 0.02"/></geometry>
+      <origin xyz="0 0 0.01"/>
+    </collision>
+    <inertial>
+      <mass value="20.0"/>
+      <inertia ixx="0.1" ixy="0" ixz="0" iyy="0.1" iyz="0" izz="0.1"/>
+    </inertial>
+  </link>
+
+  <!-- Target marker (moved by planner) -->
+  <joint name="joint_target" type="fixed">
+    <parent link="world"/>
+    <child link="target_vessel"/>
+    <origin xyz="0.4 0.0 0.02" rpy="0 0 0"/>
+  </joint>
+
+  <link name="target_vessel">
+    <visual>
+      <geometry><sphere radius="0.008"/></geometry>
+      <material name="green"/>
+    </visual>
+    <inertial>
+      <mass value="0.001"/>
+      <inertia ixx="0.000001" ixy="0" ixz="0" iyy="0.000001" iyz="0" izz="0.000001"/>
+    </inertial>
+  </link>
+
+</robot>

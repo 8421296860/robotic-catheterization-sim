@@ -1,0 +1,4 @@
+#!/home/admin1/anaconda3/envs/perception_models/bin/python3
+import sys
+from carotid_perception.image_publisher import main
+sys.exit(main())

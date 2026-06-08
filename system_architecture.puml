@@ -1,0 +1,35 @@
+@startuml
+skinparam componentStyle uml2
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+
+package "Minimal Working Prototype Architecture" {
+  
+  [Ultrasound-like / Public Medical Image Data] as US_Data
+  
+  node "ROS2 Perception Node\n(carotid_perception)" as Perception {
+    [Segmentation-Based Artery Detection]
+    [Center Point Output]
+  }
+  
+  node "Robot Target Planning Node\n(carotid_motion_planner)" as MotionPlanner {
+    [Convert perception output into target pose]
+    [Simplified control / Inverse Kinematics]
+  }
+  
+  node "ROS2 Robotic Simulation\n(ros2_control & Gazebo)" as Controller {
+    [Move robotic arm toward target in simulation]
+  }
+  
+  node "Simplified Gazebo Environment" as Gazebo {
+    [Custom 5-DOF Robotic Arm]
+    [Ultrasound Probe End-Effector]
+  }
+
+  US_Data --> Perception : "takes an image input"
+  Perception --> MotionPlanner : "Outputs center point"
+  MotionPlanner --> Controller : "Target pose / access point"
+  Controller --> Gazebo : "Move the robotic arm"
+  Gazebo --> Controller : Joint States
+}
+@enduml

@@ -1,0 +1,150 @@
+Panels:
+  - Class: rviz_common/Displays
+    Help Height: 78
+    Name: Displays
+    Property Tree Widget:
+      Expanded:
+        - /Global Options1
+        - /RobotModel1
+      Splitter Ratio: 0.5
+    Tree Height: 800
+  - Class: rviz_common/Views
+    Name: Views
+    Expanded:
+      - /Current View1
+    Splitter Ratio: 0.5
+
+Visualization Manager:
+  Class: ""
+  Displays:
+    - Alpha: 0.35
+      Cell Size: 0.1
+      Class: rviz_default_plugins/Grid
+      Color: 60; 60; 90
+      Enabled: true
+      Line Style:
+        Line Width: 0.02
+        Value: Lines
+      Name: Grid
+      Normal Cell Count: 0
+      Offset:
+        X: 0
+        Y: 0
+        Z: 0
+      Plane: XY
+      Plane Cell Count: 30
+      Reference Frame: <Fixed Frame>
+      Value: true
+
+    - Class: rviz_default_plugins/RobotModel
+      Enabled: true
+      Name: Arm + Scene
+      Description Topic:
+        Value: /robot_description
+      Robot Description: robot_description
+      TF Prefix: ""
+      Update Interval: 0
+      Visual Enabled: true
+      Collision Enabled: false
+      Alpha: 1.0
+
+    - Class: rviz_default_plugins/TF
+      Enabled: true
+      Frame Timeout: 15
+      Frames:
+        All Enabled: false
+        ee_link:
+          Value: true
+        world:
+          Value: true
+        base_link:
+          Value: true
+      Marker Scale: 0.15
+      Name: TF
+      Show Arrows: true
+      Show Axes: true
+      Show Names: true
+      Update Interval: 0
+      Value: true
+
+    - Class: rviz_default_plugins/Marker
+      Enabled: true
+      Name: Detected Target (RED SPHERE)
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /detected_point
+      Value: true
+
+    - Class: rviz_default_plugins/Image
+      Enabled: true
+      Max Value: 1
+      Median window: 5
+      Min Value: 0
+      Name: Ultrasound + Segmentation
+      Normalize Range: true
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /carotid/overlay
+      Value: true
+
+    - Class: rviz_default_plugins/Image
+      Enabled: true
+      Max Value: 1
+      Median window: 5
+      Min Value: 0
+      Name: Segmentation Mask
+      Normalize Range: true
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /carotid/mask
+      Value: true
+
+  Enabled: true
+  Global Options:
+    Background Color: 12; 15; 25
+    Fixed Frame: world
+    Frame Rate: 30
+  Name: root
+  Tools:
+    - Class: rviz_default_plugins/Interact
+      Hide Inactive Objects: true
+    - Class: rviz_default_plugins/MoveCamera
+    - Class: rviz_default_plugins/Select
+  Value: true
+  Views:
+    Current:
+      Class: rviz_default_plugins/TopDownOrtho
+      Name: Current View
+      Near Clip Distance: 0.01
+      Target Frame: <Fixed Frame>
+      Value: TopDownOrtho (rviz)
+      Scale: 50.0
+      X: 0.2
+      Y: 0.0
+      Angle: 0.0
+    Saved: ~
+
+Window Geometry:
+  Displays:
+    collapsed: false
+  Height: 1000
+  Hide Left Dock: false
+  Hide Right Dock: false
+  QMainWindow State: ""
+  Views:
+    collapsed: false
+  Width: 1600
+  X: 0
+  Y: 0

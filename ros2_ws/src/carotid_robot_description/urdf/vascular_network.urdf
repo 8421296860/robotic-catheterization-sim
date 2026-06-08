@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<robot name="vascular_network">
+
+  <!-- Base Link (Femoral Entry Point) -->
+  <link name="base_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><sphere radius="0.01"/></geometry>
+      <material name="entry_point"><color rgba="0 1 0 1"/></material>
+    </visual>
+  </link>
+
+  <!-- Femoral Artery -->
+  <joint name="j_femoral" type="fixed">
+    <parent link="base_link"/>
+    <child link="femoral_artery"/>
+    <origin xyz="0 0 0.15" rpy="0 0 0"/>
+  </joint>
+  <link name="femoral_artery">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><cylinder length="0.3" radius="0.01"/></geometry>
+      <material name="vessel"><color rgba="0.8 0.1 0.1 0.5"/></material>
+    </visual>
+  </link>
+  <gazebo reference="femoral_artery">
+    <material>Gazebo/Red</material>
+  </gazebo>
+
+  <!-- Aorta -->
+  <joint name="j_aorta" type="fixed">
+    <parent link="femoral_artery"/>
+    <child link="aorta"/>
+    <origin xyz="0.02 0 0.3" rpy="0 0 0"/>
+  </joint>
+  <link name="aorta">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><cylinder length="0.3" radius="0.025"/></geometry>
+      <material name="vessel"/>
+    </visual>
+  </link>
+  <gazebo reference="aorta">
+    <material>Gazebo/Red</material>
+  </gazebo>
+
+  <!-- Common Carotid Artery (Lower) -->
+  <joint name="j_common_carotid" type="fixed">
+    <parent link="aorta"/>
+    <child link="common_carotid"/>
+    <origin xyz="-0.02 0 0.25" rpy="0 0 0"/>
+  </joint>
+  <link name="common_carotid">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><cylinder length="0.2" radius="0.008"/></geometry>
+      <material name="vessel"/>
+    </visual>
+  </link>
+  <gazebo reference="common_carotid">
+    <material>Gazebo/Red</material>
+  </gazebo>
+
+  <!-- Patient Specific Carotid Bifurcation Mesh -->
+  <joint name="j_mesh" type="fixed">
+    <parent link="common_carotid"/>
+    <child link="carotid_mesh"/>
+    <!-- Positioned precisely so the base of the mesh aligns with the top of the cylinder -->
+    <origin xyz="0.0 -0.05 0.08" rpy="-1.5708 0 0"/>
+  </joint>
+  <link name="carotid_mesh">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://carotid_robot_description/meshes/carotid.stl" scale="0.005 0.005 0.005"/>
+      </geometry>
+      <material name="mesh_color"><color rgba="1.0 0.5 0.2 0.8"/></material>
+    </visual>
+  </link>
+  <gazebo reference="carotid_mesh">
+    <material>Gazebo/Orange</material>
+  </gazebo>
+
+</robot>
